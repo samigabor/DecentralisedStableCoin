@@ -2,7 +2,7 @@
 
 pragma solidity ^0.8.0;
 
-import {ERC20Burnable, ERC20} from "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
+import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 
 /**
@@ -12,7 +12,7 @@ import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
  * Minting: Algorithmic
  * Relative Stability: Pegged to USD
  */
-contract StableCoin is ERC20Burnable, Ownable {
+contract StableCoin is ERC20, Ownable {
     error StableCoin__NotZeroAmount();
     error StableCoin__NotZeroAddress();
     error StableCoin__AmountExeedsBalance();
@@ -27,12 +27,10 @@ contract StableCoin is ERC20Burnable, Ownable {
         return true;
     }
 
-    function burn(uint256 amount) public override onlyOwner {
+    function burn(address from, uint256 amount) external onlyOwner {
         if (amount == 0) revert StableCoin__NotZeroAmount();
-        if (amount > balanceOf(msg.sender)) revert StableCoin__AmountExeedsBalance();
+        if (amount > balanceOf(from)) revert StableCoin__AmountExeedsBalance();
 
-        super.burn(amount);
+        _burn(from, amount);
     }
-
-    
 }
