@@ -39,14 +39,12 @@ contract OpenInvariantsTest is StdInvariant, Test {
         targetContract(address(engine));
     }
 
-    // function invariant_CollateralGreaterThanTotalDscMinted() public view {
-    //     uint256 wethCollateralAmount = IERC20(weth).balanceOf(address(engine));
-    //     uint256 wbtcCollateralAmount = IERC20(wbtc).balanceOf(address(engine));
-    //     uint256 totalSupply = stablecoin.totalSupply();
-
-    //     uint wethValue = engine.getUsdValue(weth, wethCollateralAmount);
-    //     uint wbtcValue = engine.getUsdValue(wbtc, wbtcCollateralAmount);
-
-    //     assert(wethValue + wbtcValue >= totalSupply);
-    // }
+    function invariant_CollateralGreaterThanTotalDscMinted() public view {
+        uint256 totalSupply = stablecoin.totalSupply();
+        uint256 totalWethDeposited = IERC20(weth).balanceOf(address(engine));
+        uint256 totalWbtcDeposited = IERC20(wbtc).balanceOf(address(engine));
+        uint wethValue = engine.getUsdValue(weth, totalWethDeposited);
+        uint wbtcValue = engine.getUsdValue(wbtc, totalWbtcDeposited);
+        assert(wethValue + wbtcValue >= totalSupply);
+    }
 }
