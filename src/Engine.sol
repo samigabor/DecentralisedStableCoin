@@ -175,6 +175,7 @@ contract Engine {
     }
 
     function getUsdValue(address token, uint256 amount) public view returns (uint256) {
+        if (s_priceFeeds[token] == address(0)) return 0;
         (, int256 price,,,) = AggregatorV3Interface(s_priceFeeds[token]).latestRoundData();
         return (uint256(price) * amount) / 1e8; // Chainlink returns 8 decimals
     }
