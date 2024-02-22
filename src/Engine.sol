@@ -197,9 +197,9 @@ contract Engine {
      */
     function getHealthFactor(address user) public view returns (uint256) {
         (uint256 dscBalance, uint256 collateralValueInUsd) = _getAccountInformation(user);
+        if (dscBalance == 0) return type(uint256).max;
         uint256 collateralAdjustedForThreshold = collateralValueInUsd * LIQUIDATION_THRESHOLD / LIQUIDATION_PRECISION;
 
-        if (dscBalance == 0) return collateralAdjustedForThreshold;
 
         return collateralAdjustedForThreshold * 1 ether / dscBalance;
     }
@@ -208,7 +208,7 @@ contract Engine {
         return _getAccountInformation(user);
     }
 
-    function getCollateralBalanceOfUser(address user, address token) external view returns(uint256){
+    function getCollateralBalanceOfUser(address user, address token) external view returns (uint256) {
         return s_collateralDeposited[user][token];
     }
 
