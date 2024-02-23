@@ -214,4 +214,19 @@ contract EngineTest is Test {
 
         MockV3Aggregator(ethUsdPriceFeed).updateAnswer(2000e8);
     }
+
+    /**
+     * Collateral deposited: 10 ether
+     * ETH price: $2000
+     *  => Max DSC allowed to mint: 10000 DSC
+     */
+    function testGetMaxDSCAllowedToMint() public depositCollateral {
+        uint256 maxDscAllowedToMint = engine.getMaxDSCAllowedToMint(user);
+        assertEq(maxDscAllowedToMint, 10000 ether);
+
+        vm.prank(user);
+        engine.mintDSC(1000 ether);
+        maxDscAllowedToMint = engine.getMaxDSCAllowedToMint(user);
+        assertEq(maxDscAllowedToMint, 9000 ether);
+    }
 }

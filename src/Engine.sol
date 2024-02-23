@@ -212,6 +212,11 @@ contract Engine {
         return s_collateralDeposited[user][token];
     }
 
+    function getMaxDSCAllowedToMint(address user) public view returns (uint256) {
+        (uint256 dscMinted, uint256 collateralValueInUsd) = _getAccountInformation(user);
+        return collateralValueInUsd * LIQUIDATION_THRESHOLD / LIQUIDATION_PRECISION - dscMinted;
+    }
+
     /**
      * @dev Low-level internal function, do not call unless the function calling it is checking the health factor being broken
      */
