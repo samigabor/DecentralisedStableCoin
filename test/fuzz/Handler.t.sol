@@ -39,6 +39,28 @@ contract Handler is Test {
 
     }
 
+    /**
+     * Bound the collateral seed to the collateral tokens
+     * Bound the amount to redeem to the user's collateral balance
+     */
+    function redeemCollateral(uint256 collateralSeed, uint256 amount) public {
+        ERC20Mock collateral = _getCollateralAddressFromSeed(collateralSeed);
+        uint256 maxCollateralToRedeem = dsce.getCollateralBalanceOfUser(msg.sender, address(collateral));
+        // cap fuzz input to collateral deposited by user
+        uint256 collateralAmount = bound(amount, 0, maxCollateralToRedeem);
+        if (collateralAmount == 0) { return; }
+        vm.prank(msg.sender);
+        dsce.redeemCollateral(address(collateral), collateralAmount);
+    }
+
+    function mintDSC(uint256 amount) public {
+        uint256 maxDscToMint = dsce.getMaxDSCAllowedToMint(msg.sender);
+        amount = bound(amount, 0, maxDscToMint);
+        if (amount == 0) { return; }
+        vm.prank(msg.sender);
+        dsce.mintDSC(amount);
+    }
+
     // Helper Functions
     function _getCollateralAddressFromSeed(uint256 collateralSeed) private view returns (ERC20Mock) {
         return collateralSeed % 2 == 0 ? weth : wbtc;
