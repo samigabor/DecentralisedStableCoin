@@ -105,7 +105,7 @@ contract EngineTest is Test {
     }
 
     function testGetHealthFactor() public {
-        assertEq(engine.getHealthFactor(user), 0); // 0 collateral deposited, 0 DSC minted => health factor = 0
+        assertEq(engine.getHealthFactor(user), type(uint256).max); // 0 collateral deposited, 0 DSC minted => health factor = max uint256
 
         uint256 collateralDeposited = 0.05 ether; // deposit $100 worth of collateral (100 / 2000 = 0.05)
         ERC20Mock(weth).mint(user, collateralDeposited);
@@ -113,7 +113,7 @@ contract EngineTest is Test {
         ERC20Mock(weth).approve(address(engine), collateralDeposited);
         engine.depositCollateral(weth, collateralDeposited);
         vm.stopPrank();
-        assertEq(engine.getHealthFactor(user), 50 ether); // 0 DSC minted => health factor = collateral adjusted for threshold
+        assertEq(engine.getHealthFactor(user), type(uint256).max); // collateral deposited, but 0 DSC minted => health factor = max uint256
 
         uint256 halfOfTheMaximumAmountAllowedToBeMinted = 25 ether;
         vm.prank(user);
