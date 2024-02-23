@@ -34,8 +34,9 @@ contract InvariantsTest is StdInvariant, Test {
     function setUp() public {
         DeployStablecoin deployer = new DeployStablecoin();
         (stablecoin, engine,) = deployer.run();
-        HelperConfig helperConfig = new HelperConfig();
-        (,, weth, wbtc,) = helperConfig.config();
+        address[] memory collateralTokens = engine.getCollateralTokens();
+        weth = collateralTokens[0];
+        wbtc = collateralTokens[1];
         handler = new Handler(engine, stablecoin);
         targetContract(address(handler));
     }
